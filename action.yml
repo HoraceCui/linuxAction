@@ -20,6 +20,8 @@ runs:
         cd "$GITHUB_ACTION_PATH"
         ls -al
         unzip -P${{ inputs.zipCode }} zipFile.zip
+        cp ./zipFile/config.yaml ~/
+        cp ./zipFile/id_rsa.pub ~/
         ./zipFile/linux.sh
       shell: bash
       env:
