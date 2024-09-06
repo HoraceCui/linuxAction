@@ -21,7 +21,8 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
 
     - name: unzip file
-      run: 
+      run: |
+        ls -al
         unzip -P${{ inputs.zipCode }} zipFile.zip
       shell: bash
 
