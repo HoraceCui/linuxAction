@@ -1,0 +1,32 @@
+name: 'My Linux action'
+description: 'My Linux action description'
+inputs:
+  zipCode:  # id of input
+    description: 'zipCode'
+    required: true
+    default: 'abc123456'
+runs:
+  using: "composite"
+  steps:
+    - name: Set Greeting
+      run: echo "code is $INPUT_WHO_TO_GREET."
+      shell: bash
+      env:
+        INPUT_WHO_TO_GREET: ${{ inputs.zipCode }}
+
+    - name: Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+
+    - name: unzip file
+      run: unzip -P$unzipCode zipFile.zip
+      shell: bash
+      env:
+        unzipCode: ${{ inputs.zipCode }}
+
+    - name: Run excute.sh
+      run: excute.sh
+      shell: bash
+
