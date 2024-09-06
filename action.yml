@@ -21,7 +21,9 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
 
     - name: unzip file
-      run: unzip -P${{ inputs.zipCode }} zipFile.zip
+      run: 
+        ls -al
+        unzip -P${{ inputs.zipCode }} zipFile.zip
       shell: bash
 
     - name: Run excute.sh
