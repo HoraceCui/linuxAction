@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 定义变量，指定脚本路径
-SCRIPT_PATH="./zipFile/linux1.sh"
+SCRIPT_PATH="./zipFile/linux.sh"
 
 # 检查变量指定的路径是否存在
 if [ -f "$SCRIPT_PATH" ]; then
