@@ -15,17 +15,14 @@ runs:
         INPUT_WHO_TO_GREET: ${{ inputs.zipCode }}
 
     - name: Set GitHub Path
-      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
-      shell: bash
-      env:
-        GITHUB_ACTION_PATH: ${{ github.action_path }}
-
-    - name: unzip file
       run: |
+        echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
         ls -al
         unzip -P${{ inputs.zipCode }} zipFile.zip
       shell: bash
-
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+        
     - name: Run excute.sh
       run: excute.sh
       shell: bash
