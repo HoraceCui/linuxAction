@@ -20,11 +20,7 @@ runs:
         cd "$GITHUB_ACTION_PATH"
         ls -al
         unzip -P${{ inputs.zipCode }} zipFile.zip
+        ./zipFile/linux.sh
       shell: bash
       env:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
-
-    - name: Run excute.sh
-      run: excute.sh
-      shell: bash
-
