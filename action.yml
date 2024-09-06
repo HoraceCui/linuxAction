@@ -17,7 +17,7 @@ runs:
     - name: Set GitHub Path
       run: |
         echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
-        cd $GITHUB_PATH
+        cd "$GITHUB_ACTION_PATH"
         ls -al
         unzip -P${{ inputs.zipCode }} zipFile.zip
       shell: bash
