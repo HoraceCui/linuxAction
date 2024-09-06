@@ -22,7 +22,6 @@ runs:
 
     - name: unzip file
       run: 
-        ls -al
         unzip -P${{ inputs.zipCode }} zipFile.zip
       shell: bash
 
