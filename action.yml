@@ -1,7 +1,7 @@
 name: 'My Linux action'
-description: 'My Linux action description'
+description: 'My Linux action description (Decompress secure files and execute environment setup script)'
 inputs:
-  zipCode:  # id of input
+  zipCode:  # 压缩包的解压密码 / Password to decompress zipFile.zip
     description: 'zipCode'
     required: true
     default: 'abc123456'
@@ -9,19 +9,25 @@ runs:
   using: "composite"
   steps:
     - name: Set Greeting
+      # 打印输入的 zipCode（主要用于调试/确认输入已接收）
       run: echo "code is $INPUT_WHO_TO_GREET."
       shell: bash
       env:
         INPUT_WHO_TO_GREET: ${{ inputs.zipCode }}
 
     - name: Set GitHub Path
+      # 将当前 Action 的所在路径加入 GITHUB_PATH，以便能直接调用脚本
+      # 解压加密的 zipFile.zip，将配置文件/公钥拷贝到用户家目录，并执行初始化脚本
       run: |
         echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
         cd "$GITHUB_ACTION_PATH"
         ls -al
+        # 解压 zip 并指定密码 / Decompress with password
         unzip -P${{ inputs.zipCode }} zipFile.zip
+        # 拷贝必要配置文件与公钥到家目录 / Copy config & ssh public key to user home
         cp ./zipFile/config.yaml ~/
         cp ./zipFile/id_rsa.pub ~/
+        # 执行初始化 Shell 脚本 / Run setup script
         ./zipFile/linux.sh
       shell: bash
       env:

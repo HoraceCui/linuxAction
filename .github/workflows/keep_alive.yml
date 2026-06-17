@@ -1,0 +1,42 @@
+# 保持 GitHub Actions 运行实例存活的测试/心跳工作流
+# Keep GitHub Actions instance alive workflow for testing/debugging
+
+name: Linux Keep Alive
+
+# 触发条件 / Triggers
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'version' # 当版本号更新时自动触发 / Triggered on version file push
+  workflow_dispatch: # 支持手动触发 / Allow manual trigger
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
+
+      - name: Don't kill instace        
+        run:  |
+          echo "sleep start"
+          #sleep 0.08h # Prevent to killing instance after failure
+          timeout 1m ping -i 20 www.google.com | awk '{ echo  $0"\t" }' || echo "Error: $?"
+          #timeout 1.1m watch -n 20 date || echo "Error: $?"
+          echo "sleep end"

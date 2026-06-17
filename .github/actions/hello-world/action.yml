@@ -1,0 +1,39 @@
+name: 'Hello World'
+description: 'Greet someone (Composite action example: greets user, generates random number, runs goodbye.sh)'
+inputs:
+  who-to-greet:  # 要问候的对象名字 / Target to greet
+    description: 'Who to greet'
+    required: true
+    default: 'World'
+outputs:
+  random-number:
+    description: "Random number"
+    value: ${{ steps.random-number-generator.outputs.random-number }}
+runs:
+  using: "composite"
+  steps:
+    - name: Set Greeting
+      # 打印问候语 / Print greeting message
+      run: echo "Hello $INPUT_WHO_TO_GREET."
+      shell: bash
+      env:
+        INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
+
+    - name: Random Number Generator
+      id: random-number-generator
+      # 生成一个随机数并输出 / Generate a random number and set output
+      run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Set GitHub Path
+      # 将当前 Action 所在的目录添加到系统路径以使用本地脚本 / Add current action path to system path to run local scripts
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+
+    - name: Run goodbye.sh
+      # 运行同目录下的 goodbye.sh / Execute goodbye.sh
+      run: goodbye.sh
+      shell: bash
+

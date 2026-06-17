@@ -1,0 +1,4 @@
+Type,Name,Content,ID,TTL,proxied
+AAAA,pvev6.cuiyinhu.site,2be:43ff:fef8:72d1,5c2356ec006a76d20542160e4ce7e89e,1,False
+AAAA,qnapv6.cuiyinhu.site,265e:beff:fe69:acf7,4a67410918c62114dd78f4e0bd0938bb,3600,True
+AAAA,qwebv6.cuiyinhu.site,265e:beff:fe69:acf7,530b4cba9fe3fd72cd51f93fd4c5b2b4,3600,True

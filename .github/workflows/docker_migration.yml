@@ -1,0 +1,64 @@
+# 用于手动/自动迁移 Docker Hub 镜像到阿里云容器镜像服务 (ACR) 的工作流
+# Workflow to migrate Docker Hub images to Aliyun Container Registry (ACR)
+
+name: Docker Image Migration
+
+# 触发条件 / Triggers
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'version' # 当版本号更新时触发 / Triggered on version file push
+  workflow_dispatch: # 支持手动触发并传递输入参数 / Allow manual trigger with parameters
+    inputs:
+      dockerhub_image:
+        description: 'Docker Hub 镜像名称 (全名，包括用户名/组织名和镜像名)'
+        required: true
+        type: string
+        default: 'hello-world:latest'
+      new_tag:
+        description: '需要修改的镜像 tag 名'
+        required: true
+        type: string
+        default: 'hello-world_latest'
+
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # 拉取 Docker Hub 上的镜像
+      - name: Pull image from Docker Hub
+        run: |
+          echo start pull
+          docker pull ${{ github.event.inputs.dockerhub_image }}          
+
+      # 给镜像打上新标签
+      - name: Retag Docker image
+        run: |
+          docker images
+          OLD_IMAGE=${{ github.event.inputs.dockerhub_image }}
+          NEW_TAG=${{ github.event.inputs.new_tag }}
+          NEW_IMAGE="registry.cn-shanghai.aliyuncs.com/alcui/hub:${NEW_TAG}"
+          docker tag ${OLD_IMAGE} ${NEW_IMAGE}
+          echo "Old image: ${OLD_IMAGE}"
+          echo "New image: ${NEW_IMAGE}"
+          docker images
+
+    # 推送
+      - name: Login to Aliyun Docker Registry
+        run: |
+          #if: success()  # 仅当上一步骤成功时执行 
+          echo "${{ secrets.ALIYUN_PASSWORD }}" | docker login -u "${{ secrets.ALIYUN_USERNAME }}" registry.cn-shanghai.aliyuncs.com --password-stdin
+          OLD_IMAGE=${{ github.event.inputs.dockerhub_image }}
+          NEW_TAG=${{ github.event.inputs.new_tag }}
+          NEW_IMAGE="registry.cn-shanghai.aliyuncs.com/alcui/hub:${NEW_TAG}"
+          echo "New image: ${NEW_IMAGE}"
+          docker push ${NEW_IMAGE}
+          
